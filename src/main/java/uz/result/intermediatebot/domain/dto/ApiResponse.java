@@ -1,4 +1,4 @@
-package uz.result.intermediatebot.model;
+package uz.result.intermediatebot.domain.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

@@ -5,9 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.result.intermediatebot.bot.IntermediateBot;
-import uz.result.intermediatebot.model.ApiResponse;
-import uz.result.intermediatebot.model.Button;
-import uz.result.intermediatebot.model.Counter;
+import uz.result.intermediatebot.domain.dto.ApiResponse;
+import uz.result.intermediatebot.domain.model.Button;
+import uz.result.intermediatebot.domain.model.Counter;
 import uz.result.intermediatebot.repository.ApplicationRepository;
 import uz.result.intermediatebot.repository.CounterRepository;
 

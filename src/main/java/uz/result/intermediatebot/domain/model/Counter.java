@@ -1,34 +1,28 @@
-package uz.result.intermediatebot.model;
+package uz.result.intermediatebot.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity(name = "application_user")
-public class ApplicationByUser {
+@Entity(name = "counter")
+public class Counter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String name;
+    @Enumerated(EnumType.STRING)
+    Button section;
 
-    String phoneNumber;
-
-    String service;
-
-    @Column(length = 2000)
-    String comment;
+    Long countCall;
 
     @CreationTimestamp
     LocalDateTime createdDate;

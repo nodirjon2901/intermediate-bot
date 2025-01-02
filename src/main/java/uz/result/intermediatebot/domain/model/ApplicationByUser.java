@@ -1,21 +1,21 @@
-package uz.result.intermediatebot.model;
+package uz.result.intermediatebot.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity(name = "application")
-public class Application {
+@Entity(name = "application_user")
+public class ApplicationByUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +23,12 @@ public class Application {
 
     String name;
 
-    String email;
-
     String phoneNumber;
+
+    String service;
+
+    @Column(length = 2000)
+    String comment;
 
     @CreationTimestamp
     LocalDateTime createdDate;

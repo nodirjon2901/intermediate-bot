@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.result.intermediatebot.bot.IntermediateBot;
-import uz.result.intermediatebot.model.ApiResponse;
-import uz.result.intermediatebot.model.Application;
-import uz.result.intermediatebot.model.ApplicationByUser;
+import uz.result.intermediatebot.domain.dto.ApiResponse;
+import uz.result.intermediatebot.domain.model.Application;
+import uz.result.intermediatebot.domain.model.ApplicationByUser;
 import uz.result.intermediatebot.repository.ApplicationByUserRepository;
 import uz.result.intermediatebot.repository.ApplicationRepository;
 

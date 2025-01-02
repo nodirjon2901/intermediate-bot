@@ -8,10 +8,10 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import uz.result.intermediatebot.model.Application;
-import uz.result.intermediatebot.model.ApplicationByUser;
-import uz.result.intermediatebot.model.Button;
-import uz.result.intermediatebot.model.Counter;
+import uz.result.intermediatebot.domain.model.Application;
+import uz.result.intermediatebot.domain.model.ApplicationByUser;
+import uz.result.intermediatebot.domain.model.Button;
+import uz.result.intermediatebot.domain.model.Counter;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,6 +1,9 @@
-package uz.result.intermediatebot.model;
+package uz.result.intermediatebot.domain.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,21 +11,21 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity(name = "counter")
-public class Counter {
+@Entity(name = "application")
+public class Application {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Enumerated(EnumType.STRING)
-    Button section;
+    String name;
 
-    Long countCall;
+    String email;
+
+    String phoneNumber;
 
     @CreationTimestamp
     LocalDateTime createdDate;
