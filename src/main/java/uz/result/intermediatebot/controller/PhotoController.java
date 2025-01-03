@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.result.intermediatebot.domain.dto.ApiResponse;
 import uz.result.intermediatebot.domain.dto.PhotoDto;
+import uz.result.intermediatebot.domain.model.Photo;
 import uz.result.intermediatebot.service.PhotoService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/photo")
@@ -14,6 +17,13 @@ import uz.result.intermediatebot.service.PhotoService;
 public class PhotoController {
 
     private final PhotoService photoService;
+
+    @PostMapping(value = "/create")
+    public ResponseEntity<ApiResponse<List<Photo>>> upload(
+            @RequestPart(value = "photos") List<MultipartFile> photos
+    ) {
+        return photoService.upload(photos);
+    }
 
     @GetMapping("/{name}")
     public ResponseEntity<byte[]> getPhoto(@PathVariable String name) {
