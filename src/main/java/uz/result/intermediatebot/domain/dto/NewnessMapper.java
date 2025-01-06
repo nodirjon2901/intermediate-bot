@@ -35,21 +35,4 @@ public class NewnessMapper {
         ).collect(Collectors.toList());
     }
 
-    public static Newness updateDtoToEntity(NewnessUpdateDto updateDTO) {
-        if (updateDTO == null) {
-            return null;
-        }
-        Newness newness = new Newness();
-        newness.setId(updateDTO.getId());
-        newness.setActive(updateDTO.isActive());
-        if (updateDTO.getOptionList() != null && !updateDTO.getOptionList().isEmpty()) {
-            newness.setOptionList(
-                    updateDTO.getOptionList().stream().map(
-                            NewOptionMapper::updateDtoToEntity
-                    ).collect(Collectors.toList())
-            );
-        }
-        return newness;
-    }
-
 }
