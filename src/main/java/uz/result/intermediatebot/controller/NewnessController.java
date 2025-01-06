@@ -53,9 +53,10 @@ public class NewnessController {
 
     @PutMapping(value = "/update", consumes = {"application/json"})
     public ResponseEntity<ApiResponse<NewnessResponseDto>> update(
+            @RequestHeader(value = "Accept-Language", required = false) String lang,
             @RequestBody NewnessUpdateDto updateDTO
     ) {
-        return newnessService.update(updateDTO);
+        return newnessService.update(updateDTO, lang);
     }
 
     @DeleteMapping("/delete/{id}")

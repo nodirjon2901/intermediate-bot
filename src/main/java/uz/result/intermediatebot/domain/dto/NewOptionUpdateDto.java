@@ -13,9 +13,9 @@ public class NewOptionUpdateDto {
 
     Long id;
 
-    LanguageDto title;
+    String title;
 
-    LanguageDto body;
+    String body;
 
     Photo photo;
 

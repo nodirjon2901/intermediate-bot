@@ -48,25 +48,25 @@ public class NewOptionMapper {
         }
     }
 
-    public static NewOption updateDtoToEntity(NewOptionUpdateDto updateDto) {
-        if (updateDto == null) {
-            return null;
-        }
-        NewOption option = new NewOption();
-        option.setId(updateDto.getId());
-        option.setPhoto(updateDto.getPhoto());
-        option.setOrderNum(updateDto.getOrderNum());
-        if (updateDto.getTitle() != null) {
-            option.setTitleUz(updateDto.getTitle().getUz());
-            option.setTitleEn(updateDto.getTitle().getEn());
-            option.setTitleRu(updateDto.getTitle().getRu());
-        }
-        if (updateDto.getBody() != null) {
-            option.setBodyUz(updateDto.getBody().getUz());
-            option.setBodyEn(updateDto.getBody().getEn());
-            option.setBodyRu(updateDto.getBody().getRu());
-        }
-        return option;
-    }
+//    public static NewOption updateDtoToEntity(NewOptionUpdateDto updateDto) {
+//        if (updateDto == null) {
+//            return null;
+//        }
+//        NewOption option = new NewOption();
+//        option.setId(updateDto.getId());
+//        option.setPhoto(updateDto.getPhoto());
+//        option.setOrderNum(updateDto.getOrderNum());
+//        if (updateDto.getTitle() != null) {
+//            option.setTitleUz(updateDto.getTitle().getUz());
+//            option.setTitleEn(updateDto.getTitle().getEn());
+//            option.setTitleRu(updateDto.getTitle().getRu());
+//        }
+//        if (updateDto.getBody() != null) {
+//            option.setBodyUz(updateDto.getBody().getUz());
+//            option.setBodyEn(updateDto.getBody().getEn());
+//            option.setBodyRu(updateDto.getBody().getRu());
+//        }
+//        return option;
+//    }
 
 }

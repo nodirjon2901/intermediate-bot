@@ -15,6 +15,7 @@ import uz.result.intermediatebot.domain.dto.*;
 import uz.result.intermediatebot.domain.model.NewOption;
 import uz.result.intermediatebot.domain.model.Newness;
 import uz.result.intermediatebot.domain.model.Photo;
+import uz.result.intermediatebot.exception.LanguageNotSupportedException;
 import uz.result.intermediatebot.exception.NotFoundException;
 import uz.result.intermediatebot.repository.NewOptionRepository;
 import uz.result.intermediatebot.repository.NewnessRepository;
@@ -167,51 +168,65 @@ public class NewnessService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<ApiResponse<NewnessResponseDto>> update(NewnessUpdateDto updateDTO) {
+    public ResponseEntity<ApiResponse<NewnessResponseDto>> update(NewnessUpdateDto updateDTO, String lang) {
         ApiResponse<NewnessResponseDto> response = new ApiResponse<>();
         Newness fromDb = newnessRepository.findById(updateDTO.getId()).orElseThrow(() -> {
             log.warn("Newness is not found with id: {}", updateDTO.getId());
             return new NotFoundException("Newness is not found with id: " + updateDTO.getId());
         });
-        Newness newness = NewnessMapper.updateDtoToEntity(updateDTO);
-        if (newness.isActive() != fromDb.isActive()) {
-            fromDb.setActive(newness.isActive());
+        if (updateDTO.isActive() != fromDb.isActive()) {
+            fromDb.setActive(updateDTO.isActive());
         }
-        if (newness.getOptionList() != null && !newness.getOptionList().isEmpty()) {
+        if (updateDTO.getOptionList() != null && !updateDTO.getOptionList().isEmpty()) {
             List<NewOption> dbOptionList = fromDb.getOptionList();
-            List<NewOption> optionList = newness.getOptionList();
+            List<NewOptionUpdateDto> optionList = updateDTO.getOptionList();
             List<NewOption> removeOptionList = new ArrayList<>();
-            for (NewOption newOption : optionList) {
-                if (newOption.getId() != null) {
+            for (NewOptionUpdateDto newUpdateOption : optionList) {
+                if (newUpdateOption.getId() != null) {
                     for (NewOption dbOption : dbOptionList) {
-                        if (dbOption.getId().equals(newOption.getId())) {
-                            if (newOption.getOrderNum() != null) {
-                                dbOption.setOrderNum(newOption.getOrderNum());
+                        if (dbOption.getId().equals(newUpdateOption.getId())) {
+                            if (newUpdateOption.getOrderNum() != null) {
+                                dbOption.setOrderNum(newUpdateOption.getOrderNum());
                             }
-                            if (newOption.getTitleUz() != null) {
-                                dbOption.setTitleUz(newOption.getTitleUz());
-                            }
-                            if (newOption.getTitleEn() != null) {
-                                dbOption.setTitleEn(newOption.getTitleEn());
-                            }
-                            if (newOption.getTitleRu() != null) {
-                                dbOption.setTitleRu(newOption.getTitleRu());
-                                if (dbOption.getOrderNum() == 0) {
-                                    String slug = dbOption.getId() + "-" + SlugUtil.makeSlug(newOption.getTitleRu());
-                                    fromDb.setSlug(slug);
+                            if (lang != null) {
+                                switch (lang.toLowerCase()) {
+                                    case "uz":{
+                                        if (newUpdateOption.getTitle() != null) {
+                                            dbOption.setTitleUz(newUpdateOption.getTitle());
+                                        }
+                                        if (newUpdateOption.getBody() != null) {
+                                            dbOption.setBodyUz(newUpdateOption.getBody());
+                                        }
+                                        break;
+                                    }
+                                    case "en":{
+                                        if (newUpdateOption.getTitle() != null) {
+                                            dbOption.setTitleEn(newUpdateOption.getTitle());
+                                        }
+                                        if (newUpdateOption.getBody() != null) {
+                                            dbOption.setBodyEn(newUpdateOption.getBody());
+                                        }
+                                        break;
+                                    }
+                                    case "ru":{
+                                        if (newUpdateOption.getTitle() != null) {
+                                            dbOption.setTitleRu(newUpdateOption.getTitle());
+                                            if (dbOption.getOrderNum() == 0) {
+                                                String slug = dbOption.getId() + "-" + SlugUtil.makeSlug(newUpdateOption.getTitle());
+                                                fromDb.setSlug(slug);
+                                            }
+                                        }
+                                        if (newUpdateOption.getBody() != null) {
+                                            dbOption.setBodyRu(newUpdateOption.getBody());
+                                        }
+                                        break;
+                                    }
+                                    default:
+                                        throw new LanguageNotSupportedException("Language is not supported: " + lang);
                                 }
                             }
-                            if (newOption.getBodyUz() != null) {
-                                dbOption.setBodyUz(newOption.getBodyUz());
-                            }
-                            if (newOption.getBodyEn() != null) {
-                                dbOption.setBodyEn(newOption.getBodyEn());
-                            }
-                            if (newOption.getBodyRu() != null) {
-                                dbOption.setBodyRu(newOption.getBodyRu());
-                            }
-                            if (newOption.getPhoto() != null) {
-                                Photo photo = newOption.getPhoto();
+                            if (newUpdateOption.getPhoto() != null) {
+                                Photo photo = newUpdateOption.getPhoto();
                                 if (photo.getHttpUrl() != null && photo.getId() == null) {
                                     Photo newPhoto = photoRepository.findByHttpUrl(photo.getHttpUrl()).orElseThrow(() -> {
                                         log.warn("Photo is not found with url: {}", photo.getHttpUrl());
@@ -220,15 +235,12 @@ public class NewnessService {
                                     dbOption.setPhoto(newPhoto);
                                 }
                             }
-                            if (newOption.getPhoto() == null && newOption.getTitleUz() == null && newOption.getTitleRu() == null
-                                    && newOption.getBodyUz() == null && newOption.getBodyRu() == null) {
+                            if (newUpdateOption.getPhoto() == null && newUpdateOption.getTitle() == null &&
+                                    newUpdateOption.getBody() == null) {
                                 removeOptionList.add(dbOption);
                             }
                         }
                     }
-                } else {
-                    newOption.setNewness(fromDb);
-                    dbOptionList.add(newOption);
                 }
             }
             for (NewOption removeOption : removeOptionList) {
@@ -242,6 +254,82 @@ public class NewnessService {
         response.setMessage("Successfully updated");
         return ResponseEntity.ok(response);
     }
+
+//    public ResponseEntity<ApiResponse<NewnessResponseDto>> update(NewnessUpdateDto updateDTO) {
+//        ApiResponse<NewnessResponseDto> response = new ApiResponse<>();
+//        Newness fromDb = newnessRepository.findById(updateDTO.getId()).orElseThrow(() -> {
+//            log.warn("Newness is not found with id: {}", updateDTO.getId());
+//            return new NotFoundException("Newness is not found with id: " + updateDTO.getId());
+//        });
+//        Newness newness = NewnessMapper.updateDtoToEntity(updateDTO);
+//        if (newness.isActive() != fromDb.isActive()) {
+//            fromDb.setActive(newness.isActive());
+//        }
+//        if (newness.getOptionList() != null && !newness.getOptionList().isEmpty()) {
+//            List<NewOption> dbOptionList = fromDb.getOptionList();
+//            List<NewOption> optionList = newness.getOptionList();
+//            List<NewOption> removeOptionList = new ArrayList<>();
+//            for (NewOption newOption : optionList) {
+//                if (newOption.getId() != null) {
+//                    for (NewOption dbOption : dbOptionList) {
+//                        if (dbOption.getId().equals(newOption.getId())) {
+//                            if (newOption.getOrderNum() != null) {
+//                                dbOption.setOrderNum(newOption.getOrderNum());
+//                            }
+//                            if (newOption.getTitleUz() != null) {
+//                                dbOption.setTitleUz(newOption.getTitleUz());
+//                            }
+//                            if (newOption.getTitleEn() != null) {
+//                                dbOption.setTitleEn(newOption.getTitleEn());
+//                            }
+//                            if (newOption.getTitleRu() != null) {
+//                                dbOption.setTitleRu(newOption.getTitleRu());
+//                                if (dbOption.getOrderNum() == 0) {
+//                                    String slug = dbOption.getId() + "-" + SlugUtil.makeSlug(newOption.getTitleRu());
+//                                    fromDb.setSlug(slug);
+//                                }
+//                            }
+//                            if (newOption.getBodyUz() != null) {
+//                                dbOption.setBodyUz(newOption.getBodyUz());
+//                            }
+//                            if (newOption.getBodyEn() != null) {
+//                                dbOption.setBodyEn(newOption.getBodyEn());
+//                            }
+//                            if (newOption.getBodyRu() != null) {
+//                                dbOption.setBodyRu(newOption.getBodyRu());
+//                            }
+//                            if (newOption.getPhoto() != null) {
+//                                Photo photo = newOption.getPhoto();
+//                                if (photo.getHttpUrl() != null && photo.getId() == null) {
+//                                    Photo newPhoto = photoRepository.findByHttpUrl(photo.getHttpUrl()).orElseThrow(() -> {
+//                                        log.warn("Photo is not found with url: {}", photo.getHttpUrl());
+//                                        return new NotFoundException("Photo is not found with url: " + photo.getHttpUrl());
+//                                    });
+//                                    dbOption.setPhoto(newPhoto);
+//                                }
+//                            }
+//                            if (newOption.getPhoto() == null && newOption.getTitleUz() == null && newOption.getTitleRu() == null
+//                                    && newOption.getBodyUz() == null && newOption.getBodyRu() == null) {
+//                                removeOptionList.add(dbOption);
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    newOption.setNewness(fromDb);
+//                    dbOptionList.add(newOption);
+//                }
+//            }
+//            for (NewOption removeOption : removeOptionList) {
+//                dbOptionList.remove(removeOption);
+//                optionRepository.deleteByCustom(removeOption.getId());
+//            }
+//        }
+//        NewnessResponseDto responseDTO = new NewnessResponseDto(newnessRepository.save(fromDb));
+//        responseDTO.getOptionList().sort(Comparator.comparing(NewOptionResponseDto::getOrderNum));
+//        response.setData(responseDTO);
+//        response.setMessage("Successfully updated");
+//        return ResponseEntity.ok(response);
+//    }
 
     public ResponseEntity<ApiResponse<?>> delete(Long id) {
         ApiResponse<?> response = new ApiResponse<>();
